@@ -10,9 +10,9 @@
     --card: #ffffff;
     --ink: #2d2a26;
     --muted: #8a7f72;
-    --accent: #e0784a;
     --green: #5aa469;
     --line: #e8dfd0;
+    --gold: #e8a93d;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -20,31 +20,38 @@
     font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg);
     color: var(--ink);
-    padding: 12px;
-    max-width: 640px;
+    padding: 10px;
+    max-width: 880px;
     margin-left: auto;
     margin-right: auto;
   }
-  header { text-align: center; margin: 8px 0 12px; }
-  header h1 { font-size: 1.35rem; margin: 0 0 4px; }
-  header p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+  header { text-align: center; margin: 4px 0 8px; }
+  header h1 { font-size: 1.2rem; margin: 0 0 2px; }
+  header p { margin: 0; color: var(--muted); font-size: 0.78rem; }
+  .rewards-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .rewards-note b { color: var(--gold); }
   #family-progress {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
+    padding: 8px 14px;
+    margin-bottom: 10px;
     position: sticky;
     top: 8px;
     z-index: 10;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
   #family-progress .bar {
-    height: 10px;
+    height: 9px;
     background: #efe7d6;
     border-radius: 6px;
     overflow: hidden;
-    margin-top: 6px;
+    margin-top: 5px;
   }
   #family-progress .fill {
     height: 100%;
@@ -53,61 +60,77 @@
     border-radius: 6px;
     transition: width 0.3s ease;
   }
-  #family-progress .label { font-size: 0.85rem; font-weight: 600; }
+  #family-progress .label { font-size: 0.82rem; font-weight: 600; }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 620px) {
+    .grid { grid-template-columns: 1fr; }
+  }
   .kid-card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
+    border-radius: 14px;
+    padding: 10px 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    border-top: 4px solid var(--kc, #ccc);
   }
   .kid-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
   }
-  .kid-head h2 { font-size: 1.1rem; margin: 0; }
-  .kid-count {
-    font-size: 0.8rem;
+  .kid-head h2 { font-size: 1rem; margin: 0; }
+  .pills { display: flex; gap: 6px; }
+  .pill {
+    font-size: 0.72rem;
     font-weight: 700;
-    color: var(--muted);
-    background: #f3ecdd;
-    padding: 3px 10px;
+    padding: 2px 9px;
     border-radius: 20px;
     white-space: nowrap;
   }
-  .kid-count.done { color: #fff; background: var(--green); }
+  .pill.stars { background: #fdf3dd; color: #b97f1a; border: 1px solid #f0dca8; }
+  .pill.count { background: #f3ecdd; color: var(--muted); }
+  .pill.count.done { color: #fff; background: var(--green); }
+  .tier-line {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    min-height: 1.1em;
+  }
+  .tier-line b { color: var(--ink); }
   .section-title {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--muted);
-    margin: 10px 0 4px;
+    margin: 8px 0 2px;
     font-weight: 700;
   }
   .chore {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 9px 4px;
+    gap: 10px;
+    padding: 7px 2px;
     border-bottom: 1px solid #f3ede0;
     cursor: pointer;
     user-select: none;
-    min-height: 48px;
+    min-height: 42px;
   }
   .chore:last-child { border-bottom: none; }
   .box {
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
     border: 2px solid #c9bda9;
-    border-radius: 9px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: transparent;
     background: #fff;
     transition: all 0.15s ease;
@@ -117,14 +140,14 @@
     border-color: var(--green);
     color: #fff;
   }
-  .chore .name { font-size: 0.95rem; line-height: 1.25; }
+  .chore .name { font-size: 0.85rem; line-height: 1.25; }
   .chore.checked .name { text-decoration: line-through; color: var(--muted); }
   #reset-btn {
     display: block;
     width: 100%;
-    margin: 4px 0 20px;
-    padding: 12px;
-    font-size: 0.95rem;
+    margin: 10px 0 12px;
+    padding: 10px;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--muted);
     background: transparent;
@@ -133,7 +156,77 @@
     cursor: pointer;
   }
   #reset-btn:active { background: #f3ecdd; }
-  footer { text-align: center; color: var(--muted); font-size: 0.75rem; margin-bottom: 16px; }
+  footer { text-align: center; color: var(--muted); font-size: 0.72rem; margin-bottom: 14px; }
+  /* Perfect-day surprise modal */
+  #modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 20px;
+  }
+  #modal-overlay.show { display: flex; }
+  #modal {
+    background: #fff;
+    border-radius: 22px;
+    padding: 30px 26px;
+    text-align: center;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    animation: pop 0.35s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  #modal .trophy { font-size: 3.2rem; }
+  #modal h3 { margin: 8px 0 4px; font-size: 1.3rem; }
+  #modal .surprise-msg { font-size: 1.05rem; font-weight: 600; margin: 8px 0; line-height: 1.35; }
+  #modal .star-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+  #modal button {
+    background: var(--gold);
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px 34px;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+  .confetti {
+    position: fixed;
+    top: -16px;
+    width: 10px;
+    height: 14px;
+    z-index: 60;
+    pointer-events: none;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(112vh) rotate(720deg); }
+  }
+  #toast {
+    position: fixed;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #2d2a26;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 70;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -147,11 +240,23 @@
   <div class="label" id="family-label">Family progress: 0 of 42</div>
   <div class="bar"><div class="fill" id="family-fill"></div></div>
 </div>
+<p class="rewards-note">Each chore = <b>1 ⭐</b> · Stars unlock tiers · Ask Mom &amp; Dad what each tier earns! 🏆</p>
 
-<div id="cards"></div>
+<div class="grid" id="cards"></div>
 
 <button id="reset-btn">Reset Progress</button>
-<footer>Checks save automatically on this device · Fresh list each morning</footer>
+<footer>Checks &amp; stars save automatically on this device · Fresh checklist each morning · Stars are yours to keep ⭐</footer>
+
+<div id="modal-overlay">
+  <div id="modal">
+    <div class="trophy">🏆</div>
+    <h3>PERFECT DAY!</h3>
+    <div class="surprise-msg" id="surprise-msg"></div>
+    <div class="star-note" id="modal-stars"></div>
+    <button id="modal-claim">Claim ⭐</button>
+  </div>
+</div>
+<div id="toast"></div>
 
 <script>
 (function () {
@@ -159,28 +264,77 @@
 
   var KIDS = [
     {
-      name: "Lenny", color: "#4a90d9",
+      name: "Lenny", icon: "⚽", color: "#4a90d9",
       morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Medicine", "Morning prayer"],
-      evening: ["Homework", "Read", "Medicine", "Trash/recycling", "Put away clean clothes", "Tidy dining room table"]
+      evening: ["Homework", "Read", "Medicine", "Trash/recycling", "Put away clean clothes", "Tidy dining room table"],
+      tiers: [
+        { stars: 5,  label: "Rookie" },
+        { stars: 15, label: "Epic Striker" },
+        { stars: 30, label: "SIUUU Mode" },
+        { stars: 50, label: "Ultimate Legend 🥏" }
+      ],
+      surprises: [
+        "SIUUU! You went full Ronaldo today! ⚽",
+        "EPIC! You bent it like a legend! 🥅",
+        "OP! Ultimate frisbee champ energy! 🥏",
+        "No cap — that was a legendary day! 🐐"
+      ]
     },
     {
-      name: "Rex", color: "#5aa469",
+      name: "Rex", icon: "🐐", color: "#5aa469",
       morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Medicine", "Morning prayer"],
-      evening: ["Homework", "Piano practice", "Read", "Medicine", "Math flashcards · 5 min", "Put away clean clothes", "Tidy basement"]
+      evening: ["Homework", "Piano practice", "Read", "Medicine", "Math flashcards · 5 min", "Put away clean clothes", "Tidy basement"],
+      tiers: [
+        { stars: 5,  label: "Rookie" },
+        { stars: 15, label: "Epic Playmaker" },
+        { stars: 30, label: "Messi Mode: OP" },
+        { stars: 50, label: "GOAT 🐐" }
+      ],
+      surprises: [
+        "EPIC! Messi would be proud! ⚽",
+        "OP! That left foot is pure magic! 🪄",
+        "You ate and left NO crumbs! 🐐",
+        "W dub! A perfect day! 🏆"
+      ]
     },
     {
-      name: "Etta", color: "#c86dd7",
+      name: "Etta", icon: "🤸", color: "#c86dd7",
       morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Vitamins", "Morning prayer"],
-      evening: ["Homework", "Piano practice", "Read", "Put away clean clothes", "Tidy living room"]
+      evening: ["Homework", "Piano practice", "Read", "Put away clean clothes", "Tidy living room"],
+      tiers: [
+        { stars: 5,  label: "Rookie" },
+        { stars: 15, label: "Epic Gymnast" },
+        { stars: 30, label: "Stuck the Landing" },
+        { stars: 50, label: "Gold Medalist 🥇" }
+      ],
+      surprises: [
+        "EPIC! You stuck the landing! 🤸",
+        "10/10! Gold medal vibes! 🥇",
+        "Flawless! The judges are shook! ✨",
+        "That was a perfect-10 routine! 💫"
+      ]
     },
     {
-      name: "Jack", color: "#e0784a",
-      morning: ["Unload dishwasher", "Eat breakfast", "Brush teeth", "Vitamins"],
-      evening: ["Line up shoes", "Brush teeth"]
+      name: "Jack", icon: "🏀", color: "#e0784a",
+      morning: ["🍽️ Unload dishwasher", "🥣 Eat breakfast", "🪥 Brush teeth", "💊 Vitamins"],
+      evening: ["👟 Line up shoes", "🪥 Brush teeth"],
+      tiers: [
+        { stars: 5,  label: "Tiny Rookie" },
+        { stars: 15, label: "Epic Ball Star" },
+        { stars: 30, label: "OP Athlete" },
+        { stars: 50, label: "Hall of Famer 🏆" }
+      ],
+      surprises: [
+        "EPIC! Ball star! ⚽🏀🏈",
+        "TOUCHDOWN! You did it! 🎉",
+        "W! Little champ! 🏆",
+        "So OP! Biggest high five! 🙌"
+      ]
     }
   ];
 
-  var STORE_KEY = "kids-chores-dashboard-v1";
+  var STORE_KEY = "kids-chores-dashboard-v2";
+  var OLD_KEY = "kids-chores-dashboard-v1";
 
   function todayStr() {
     var d = new Date();
@@ -193,63 +347,175 @@
     return "k" + kidIdx + "-" + period.charAt(0) + itemIdx;
   }
 
-  // Load saved state; drop it if it's from a previous day.
+  function kidIdxOf(id) { return parseInt(id.slice(1), 10); }
+
+  function freshState() {
+    var s = { date: todayStr(), checked: {}, awarded: [], celebrated: {}, stars: {}, perfect: {} };
+    for (var i = 0; i < KIDS.length; i++) { s.stars[i] = 0; s.perfect[i] = 0; }
+    return s;
+  }
+
+  // One-time migration from v1: carry today's checks, grant stars for them.
+  function migrateV1() {
+    try {
+      var raw = localStorage.getItem(OLD_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      if (!d || d.date !== todayStr()) return null;
+      return d.checked || {};
+    } catch (e) { return null; }
+  }
+
   function loadState() {
+    var s = freshState();
     try {
       var raw = localStorage.getItem(STORE_KEY);
-      if (!raw) return {};
-      var data = JSON.parse(raw);
-      if (!data || data.date !== todayStr()) return {};
-      return data.checked || {};
-    } catch (e) {
-      return {};
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (d && d.date === todayStr()) return d;
+        // New day: keep lifetime stars & perfect-day counts, reset the rest.
+        if (d) { s.stars = d.stars || s.stars; s.perfect = d.perfect || s.perfect; }
+        saveState(s);
+        return s;
+      }
+    } catch (e) {}
+    var migrated = migrateV1();
+    if (migrated) {
+      s.checked = migrated;
+      Object.keys(migrated).forEach(function (id) {
+        if (!migrated[id]) return;
+        var ki = kidIdxOf(id);
+        s.awarded.push(id);
+        s.stars[ki] = (s.stars[ki] || 0) + 1;
+      });
     }
+    saveState(s);
+    return s;
   }
 
-  // Persist the full checklist state immediately on every change.
-  function saveState(checked) {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify({
-        date: todayStr(),
-        checked: checked
-      }));
-    } catch (e) { /* storage unavailable; session-only fallback */ }
+  function saveState(s) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+    catch (e) { /* storage unavailable; session-only fallback */ }
   }
 
-  var checked = loadState();
+  var S = loadState();
 
   function totalTasks() {
     return KIDS.reduce(function (n, k) { return n + k.morning.length + k.evening.length; }, 0);
   }
 
-  function updateProgress() {
+  function kidProgress(ki) {
+    var kid = KIDS[ki], done = 0;
+    ["morning", "evening"].forEach(function (period) {
+      kid[period].forEach(function (_, ii) {
+        if (S.checked[taskId(ki, period, ii)]) done++;
+      });
+    });
+    return { done: done, total: kid.morning.length + kid.evening.length };
+  }
+
+  function tierFor(ki) {
+    var stars = S.stars[ki] || 0, tiers = KIDS[ki].tiers, cur = null, next = null;
+    tiers.forEach(function (t) {
+      if (stars >= t.stars) cur = t; else if (!next) next = t;
+    });
+    return { cur: cur, next: next };
+  }
+
+  function updateUI() {
     var total = totalTasks();
-    var done = Object.keys(checked).filter(function (id) { return checked[id]; }).length;
-    document.getElementById("family-label").textContent =
-      "Family progress: " + done + " of " + total;
-    document.getElementById("family-fill").style.width =
-      (total ? (done / total * 100) : 0) + "%";
+    var done = Object.keys(S.checked).filter(function (id) { return S.checked[id]; }).length;
+    document.getElementById("family-label").textContent = "Family progress: " + done + " of " + total;
+    document.getElementById("family-fill").style.width = (total ? (done / total * 100) : 0) + "%";
 
     KIDS.forEach(function (kid, ki) {
-      var kidTotal = kid.morning.length + kid.evening.length;
-      var kidDone = 0;
-      ["morning", "evening"].forEach(function (period) {
-        kid[period].forEach(function (_, ii) {
-          if (checked[taskId(ki, period, ii)]) kidDone++;
-        });
-      });
-      var el = document.getElementById("count-" + ki);
-      el.textContent = kidDone + "/" + kidTotal;
-      el.classList.toggle("done", kidDone === kidTotal && kidTotal > 0);
+      var p = kidProgress(ki);
+      var countEl = document.getElementById("count-" + ki);
+      countEl.textContent = p.done + "/" + p.total;
+      countEl.classList.toggle("done", p.done === p.total && p.total > 0);
+
+      var starsEl = document.getElementById("stars-" + ki);
+      starsEl.textContent = "⭐ " + (S.stars[ki] || 0);
+
+      var t = tierFor(ki), tierEl = document.getElementById("tier-" + ki);
+      var label = t.cur ? t.cur.label : "No tier yet";
+      var toNext = t.next ? " · " + (t.next.stars - (S.stars[ki] || 0)) + " ⭐ to " + t.next.label : " · top tier! 🏆";
+      tierEl.innerHTML = "";
+      var b = document.createElement("b");
+      b.textContent = label;
+      tierEl.appendChild(b);
+      tierEl.appendChild(document.createTextNode(toNext));
     });
   }
 
-  function toggle(id, rowEl) {
-    if (checked[id]) { delete checked[id]; }
-    else { checked[id] = true; }
-    rowEl.classList.toggle("checked", !!checked[id]);
-    saveState(checked);
-    updateProgress();
+  var toastTimer = null;
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2600);
+  }
+
+  function confetti() {
+    var colors = ["#e0784a", "#5aa469", "#4a90d9", "#c86dd7", "#e8a93d", "#e05a7a"];
+    for (var i = 0; i < 36; i++) {
+      var c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = (Math.random() * 100) + "vw";
+      c.style.background = colors[i % colors.length];
+      c.style.animationDuration = (2.2 + Math.random() * 1.8) + "s";
+      c.style.animationDelay = (Math.random() * 0.6) + "s";
+      document.body.appendChild(c);
+      (function (el) {
+        setTimeout(function () { el.remove(); }, 5000);
+      })(c);
+    }
+  }
+
+  function showSurprise(ki) {
+    var kid = KIDS[ki];
+    var msg = kid.surprises[Math.floor(Math.random() * kid.surprises.length)];
+    document.getElementById("surprise-msg").textContent = kid.name + ": " + msg;
+    var todayStars = S.awarded.filter(function (id) { return kidIdxOf(id) === ki; }).length;
+    document.getElementById("modal-stars").textContent =
+      "+" + todayStars + " ⭐ earned today · " + (S.stars[ki] || 0) + " ⭐ total";
+    document.getElementById("modal-overlay").classList.add("show");
+    confetti();
+  }
+
+  document.getElementById("modal-claim").addEventListener("click", function () {
+    document.getElementById("modal-overlay").classList.remove("show");
+  });
+
+  function toggle(id, ki, rowEl) {
+    var wasChecked = !!S.checked[id];
+    if (wasChecked) {
+      delete S.checked[id];
+    } else {
+      S.checked[id] = true;
+      if (S.awarded.indexOf(id) === -1) {
+        S.awarded.push(id);
+        var before = tierFor(ki).cur;
+        S.stars[ki] = (S.stars[ki] || 0) + 1;
+        var after = tierFor(ki).cur;
+        if (after && after !== before) {
+          toast("🎉 " + KIDS[ki].name + " unlocked: " + after.label + "!");
+        }
+      }
+    }
+    rowEl.classList.toggle("checked", !wasChecked);
+    saveState(S);
+    updateUI();
+
+    // Perfect-day surprise, once per kid per day.
+    var p = kidProgress(ki);
+    if (!wasChecked && p.done === p.total && p.total > 0 && S.celebrated[ki] !== todayStr()) {
+      S.celebrated[ki] = todayStr();
+      S.perfect[ki] = (S.perfect[ki] || 0) + 1;
+      saveState(S);
+      showSurprise(ki);
+    }
   }
 
   function render() {
@@ -259,18 +525,30 @@
     KIDS.forEach(function (kid, ki) {
       var card = document.createElement("div");
       card.className = "kid-card";
+      card.style.setProperty("--kc", kid.color);
 
       var head = document.createElement("div");
       head.className = "kid-head";
       var h2 = document.createElement("h2");
-      h2.textContent = kid.name;
-      h2.style.color = kid.color;
+      h2.textContent = kid.icon + " " + kid.name;
+      var pills = document.createElement("div");
+      pills.className = "pills";
+      var stars = document.createElement("span");
+      stars.className = "pill stars";
+      stars.id = "stars-" + ki;
       var count = document.createElement("span");
-      count.className = "kid-count";
+      count.className = "pill count";
       count.id = "count-" + ki;
+      pills.appendChild(stars);
+      pills.appendChild(count);
       head.appendChild(h2);
-      head.appendChild(count);
+      head.appendChild(pills);
       card.appendChild(head);
+
+      var tier = document.createElement("div");
+      tier.className = "tier-line";
+      tier.id = "tier-" + ki;
+      card.appendChild(tier);
 
       [["morning", "☀️ Morning"], ["evening", "🌙 Evening"]].forEach(function (pair) {
         var period = pair[0], label = pair[1];
@@ -282,7 +560,7 @@
         kid[period].forEach(function (name, ii) {
           var id = taskId(ki, period, ii);
           var row = document.createElement("div");
-          row.className = "chore" + (checked[id] ? " checked" : "");
+          row.className = "chore" + (S.checked[id] ? " checked" : "");
           var box = document.createElement("div");
           box.className = "box";
           box.textContent = "✓";
@@ -291,7 +569,7 @@
           nm.textContent = name;
           row.appendChild(box);
           row.appendChild(nm);
-          row.addEventListener("click", function () { toggle(id, row); });
+          row.addEventListener("click", function () { toggle(id, ki, row); });
           card.appendChild(row);
         });
       });
@@ -299,17 +577,18 @@
       wrap.appendChild(card);
     });
 
-    updateProgress();
+    updateUI();
   }
 
   document.getElementById("reset-btn").addEventListener("click", function () {
-    if (!confirm("Clear all checkmarks and start fresh?")) return;
-    checked = {};
-    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    if (!confirm("Clear today's checkmarks and start fresh? (Stars are kept ⭐)")) return;
+    S.checked = {};
+    S.awarded = [];
+    S.celebrated = {};
+    saveState(S);
     render();
   });
 
-  // Date line
   var d = new Date();
   document.getElementById("date-line").textContent =
     d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
