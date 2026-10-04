@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kids' Daily Chores Dashboard</title>
+<style>
+  :root {
+    --bg: #f6f1e7;
+    --card: #ffffff;
+    --ink: #2d2a26;
+    --muted: #8a7f72;
+    --accent: #e0784a;
+    --green: #5aa469;
+    --line: #e8dfd0;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 12px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header { text-align: center; margin: 8px 0 12px; }
+  header h1 { font-size: 1.35rem; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+  #family-progress {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 8px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  #family-progress .bar {
+    height: 10px;
+    background: #efe7d6;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  #family-progress .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--green), #7cc489);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+  }
+  #family-progress .label { font-size: 0.85rem; font-weight: 600; }
+  .kid-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .kid-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .kid-head h2 { font-size: 1.1rem; margin: 0; }
+  .kid-count {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: #f3ecdd;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .kid-count.done { color: #fff; background: var(--green); }
+  .section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 10px 0 4px;
+    font-weight: 700;
+  }
+  .chore {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 4px;
+    border-bottom: 1px solid #f3ede0;
+    cursor: pointer;
+    user-select: none;
+    min-height: 48px;
+  }
+  .chore:last-child { border-bottom: none; }
+  .box {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #c9bda9;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: transparent;
+    background: #fff;
+    transition: all 0.15s ease;
+  }
+  .chore.checked .box {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+  .chore .name { font-size: 0.95rem; line-height: 1.25; }
+  .chore.checked .name { text-decoration: line-through; color: var(--muted); }
+  #reset-btn {
+    display: block;
+    width: 100%;
+    margin: 4px 0 20px;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: 2px dashed #d8cbb4;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  #reset-btn:active { background: #f3ecdd; }
+  footer { text-align: center; color: var(--muted); font-size: 0.75rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>☀️ Today's Chores</h1>
+  <p id="date-line"></p>
+</header>
+
+<div id="family-progress">
+  <div class="label" id="family-label">Family progress: 0 of 42</div>
+  <div class="bar"><div class="fill" id="family-fill"></div></div>
+</div>
+
+<div id="cards"></div>
+
+<button id="reset-btn">Reset Progress</button>
+<footer>Checks save automatically on this device · Fresh list each morning</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var KIDS = [
+    {
+      name: "Lenny", color: "#4a90d9",
+      morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Medicine", "Morning prayer"],
+      evening: ["Homework", "Read", "Medicine", "Trash/recycling", "Put away clean clothes", "Tidy dining room table"]
+    },
+    {
+      name: "Rex", color: "#5aa469",
+      morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Medicine", "Morning prayer"],
+      evening: ["Homework", "Piano practice", "Read", "Medicine", "Math flashcards · 5 min", "Put away clean clothes", "Tidy basement"]
+    },
+    {
+      name: "Etta", color: "#c86dd7",
+      morning: ["Eat breakfast", "Brush teeth", "Get dressed", "Pack backpack + snack", "Vitamins", "Morning prayer"],
+      evening: ["Homework", "Piano practice", "Read", "Put away clean clothes", "Tidy living room"]
+    },
+    {
+      name: "Jack", color: "#e0784a",
+      morning: ["Unload dishwasher", "Eat breakfast", "Brush teeth", "Vitamins"],
+      evening: ["Line up shoes", "Brush teeth"]
+    }
+  ];
+
+  var STORE_KEY = "kids-chores-dashboard-v1";
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  }
+
+  function taskId(kidIdx, period, itemIdx) {
+    return "k" + kidIdx + "-" + period.charAt(0) + itemIdx;
+  }
+
+  // Load saved state; drop it if it's from a previous day.
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return {};
+      var data = JSON.parse(raw);
+      if (!data || data.date !== todayStr()) return {};
+      return data.checked || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Persist the full checklist state immediately on every change.
+  function saveState(checked) {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({
+        date: todayStr(),
+        checked: checked
+      }));
+    } catch (e) { /* storage unavailable; session-only fallback */ }
+  }
+
+  var checked = loadState();
+
+  function totalTasks() {
+    return KIDS.reduce(function (n, k) { return n + k.morning.length + k.evening.length; }, 0);
+  }
+
+  function updateProgress() {
+    var total = totalTasks();
+    var done = Object.keys(checked).filter(function (id) { return checked[id]; }).length;
+    document.getElementById("family-label").textContent =
+      "Family progress: " + done + " of " + total;
+    document.getElementById("family-fill").style.width =
+      (total ? (done / total * 100) : 0) + "%";
+
+    KIDS.forEach(function (kid, ki) {
+      var kidTotal = kid.morning.length + kid.evening.length;
+      var kidDone = 0;
+      ["morning", "evening"].forEach(function (period) {
+        kid[period].forEach(function (_, ii) {
+          if (checked[taskId(ki, period, ii)]) kidDone++;
+        });
+      });
+      var el = document.getElementById("count-" + ki);
+      el.textContent = kidDone + "/" + kidTotal;
+      el.classList.toggle("done", kidDone === kidTotal && kidTotal > 0);
+    });
+  }
+
+  function toggle(id, rowEl) {
+    if (checked[id]) { delete checked[id]; }
+    else { checked[id] = true; }
+    rowEl.classList.toggle("checked", !!checked[id]);
+    saveState(checked);
+    updateProgress();
+  }
+
+  function render() {
+    var wrap = document.getElementById("cards");
+    wrap.innerHTML = "";
+
+    KIDS.forEach(function (kid, ki) {
+      var card = document.createElement("div");
+      card.className = "kid-card";
+
+      var head = document.createElement("div");
+      head.className = "kid-head";
+      var h2 = document.createElement("h2");
+      h2.textContent = kid.name;
+      h2.style.color = kid.color;
+      var count = document.createElement("span");
+      count.className = "kid-count";
+      count.id = "count-" + ki;
+      head.appendChild(h2);
+      head.appendChild(count);
+      card.appendChild(head);
+
+      [["morning", "☀️ Morning"], ["evening", "🌙 Evening"]].forEach(function (pair) {
+        var period = pair[0], label = pair[1];
+        var st = document.createElement("div");
+        st.className = "section-title";
+        st.textContent = label;
+        card.appendChild(st);
+
+        kid[period].forEach(function (name, ii) {
+          var id = taskId(ki, period, ii);
+          var row = document.createElement("div");
+          row.className = "chore" + (checked[id] ? " checked" : "");
+          var box = document.createElement("div");
+          box.className = "box";
+          box.textContent = "✓";
+          var nm = document.createElement("div");
+          nm.className = "name";
+          nm.textContent = name;
+          row.appendChild(box);
+          row.appendChild(nm);
+          row.addEventListener("click", function () { toggle(id, row); });
+          card.appendChild(row);
+        });
+      });
+
+      wrap.appendChild(card);
+    });
+
+    updateProgress();
+  }
+
+  document.getElementById("reset-btn").addEventListener("click", function () {
+    if (!confirm("Clear all checkmarks and start fresh?")) return;
+    checked = {};
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    render();
+  });
+
+  // Date line
+  var d = new Date();
+  document.getElementById("date-line").textContent =
+    d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+  render();
+})();
+</script>
+</body>
+</html>
