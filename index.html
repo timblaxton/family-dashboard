@@ -61,6 +61,11 @@
     transition: width 0.3s ease;
   }
   #family-progress .label { font-size: 0.82rem; font-weight: 600; }
+  .emote-line { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .emote-line #emote-label { font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+  .emote-line .bar { flex: 1; margin-top: 0; }
+  .bar.slim { height: 7px; }
+  .fill.gold { background: linear-gradient(90deg, var(--gold), #f5c86a); }
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -186,6 +191,7 @@
   #modal .trophy { font-size: 3.2rem; }
   #modal h3 { margin: 8px 0 4px; font-size: 1.3rem; }
   #modal .surprise-msg { font-size: 1.05rem; font-weight: 600; margin: 8px 0; line-height: 1.35; }
+  #modal .emote-name { font-size: 1.5rem; font-weight: 800; color: #b97f1a; margin: 6px 0; line-height: 1.3; }
   #modal .star-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
   #modal button {
     background: var(--gold);
@@ -239,8 +245,12 @@
 <div id="family-progress">
   <div class="label" id="family-label">Family progress: 0 of 42</div>
   <div class="bar"><div class="fill" id="family-fill"></div></div>
+  <div class="emote-line">
+    <span id="emote-label">🕺 Emotes: 0/100</span>
+    <div class="bar slim"><div class="fill gold" id="emote-fill"></div></div>
+  </div>
 </div>
-<p class="rewards-note">Each chore = <b>1 ⭐</b> · Stars unlock tiers · Ask Mom &amp; Dad what each tier earns! 🏆</p>
+<p class="rewards-note">Each chore = <b>1 ⭐</b> · Perfect day = <b>1 🕺 emote</b> · Ask Mom &amp; Dad what each tier earns! 🏆</p>
 
 <div class="grid" id="cards"></div>
 
@@ -249,8 +259,9 @@
 
 <div id="modal-overlay">
   <div id="modal">
-    <div class="trophy">🏆</div>
-    <h3>PERFECT DAY!</h3>
+    <div class="trophy" id="modal-trophy">🏆</div>
+    <h3 id="modal-title">PERFECT DAY!</h3>
+    <div class="emote-name" id="emote-name"></div>
     <div class="surprise-msg" id="surprise-msg"></div>
     <div class="star-note" id="modal-stars"></div>
     <button id="modal-claim">Claim ⭐</button>
@@ -333,6 +344,23 @@
     }
   ];
 
+  var EMOTES = [
+    { name: "Griddy", icon: "🕺" },
+    { name: "SIUUU", icon: "⚽" },
+    { name: "Scuba Dive", icon: "🤿" },
+    { name: "Split Jump", icon: "🤸" },
+    { name: "Floss", icon: "🪩" },
+    { name: "Orange Justice", icon: "🍊" },
+    { name: "Worm", icon: "🐛" },
+    { name: "Robot", icon: "🤖" },
+    { name: "Dab", icon: "💪" },
+    { name: "Moonwalk", icon: "🌙" },
+    { name: "Penguin Waddle", icon: "🐧" },
+    { name: "Superhero Landing", icon: "🦸" },
+    { name: "Sprinkler", icon: "💦" },
+    { name: "Chicken Dance", icon: "🐔" }
+  ];
+
   var STORE_KEY = "kids-chores-dashboard-v2";
   var OLD_KEY = "kids-chores-dashboard-v1";
 
@@ -350,7 +378,7 @@
   function kidIdxOf(id) { return parseInt(id.slice(1), 10); }
 
   function freshState() {
-    var s = { date: todayStr(), checked: {}, awarded: [], celebrated: {}, stars: {}, perfect: {} };
+    var s = { date: todayStr(), checked: {}, awarded: [], celebrated: {}, stars: {}, perfect: {}, emotes: 0, centuries: 0 };
     for (var i = 0; i < KIDS.length; i++) { s.stars[i] = 0; s.perfect[i] = 0; }
     return s;
   }
@@ -372,9 +400,16 @@
       var raw = localStorage.getItem(STORE_KEY);
       if (raw) {
         var d = JSON.parse(raw);
+        if (d) {
+          if (d.emotes === undefined) {
+            d.emotes = 0;
+            for (var pi = 0; pi < KIDS.length; pi++) d.emotes += (d.perfect && d.perfect[pi]) || 0;
+          }
+          if (d.centuries === undefined) d.centuries = 0;
+        }
         if (d && d.date === todayStr()) return d;
-        // New day: keep lifetime stars & perfect-day counts, reset the rest.
-        if (d) { s.stars = d.stars || s.stars; s.perfect = d.perfect || s.perfect; }
+        // New day: keep lifetime stars, perfect-day counts & emotes, reset the rest.
+        if (d) { s.stars = d.stars || s.stars; s.perfect = d.perfect || s.perfect; s.emotes = d.emotes || 0; s.centuries = d.centuries || 0; }
         saveState(s);
         return s;
       }
@@ -427,6 +462,10 @@
     var done = Object.keys(S.checked).filter(function (id) { return S.checked[id]; }).length;
     document.getElementById("family-label").textContent = "Family progress: " + done + " of " + total;
     document.getElementById("family-fill").style.width = (total ? (done / total * 100) : 0) + "%";
+    var em = (S.emotes || 0), emLabel = "🕺 Emotes: " + em + "/100";
+    if (S.centuries > 0) emLabel += " 🏆×" + S.centuries;
+    document.getElementById("emote-label").textContent = emLabel;
+    document.getElementById("emote-fill").style.width = em + "%";
 
     KIDS.forEach(function (kid, ki) {
       var p = kidProgress(ki);
@@ -473,13 +512,24 @@
     }
   }
 
-  function showSurprise(ki) {
+  function showSurprise(ki, emote, century) {
     var kid = KIDS[ki];
     var msg = kid.surprises[Math.floor(Math.random() * kid.surprises.length)];
-    document.getElementById("surprise-msg").textContent = kid.name + ": " + msg;
+    if (century) {
+      document.getElementById("modal-trophy").textContent = "💯";
+      document.getElementById("modal-title").textContent = "100 EMOTES!";
+      document.getElementById("emote-name").textContent = "LEGENDARY FAMILY! 🏆×" + S.centuries;
+      document.getElementById("surprise-msg").textContent = kid.name + " unlocked the " + emote.name + " " + emote.icon + " — the one that hit 100!";
+      confetti(); confetti();
+    } else {
+      document.getElementById("modal-trophy").textContent = "🏆";
+      document.getElementById("modal-title").textContent = "PERFECT DAY!";
+      document.getElementById("emote-name").textContent = kid.name + " unlocked the " + emote.name + " " + emote.icon;
+      document.getElementById("surprise-msg").textContent = msg;
+    }
     var todayStars = S.awarded.filter(function (id) { return kidIdxOf(id) === ki; }).length;
     document.getElementById("modal-stars").textContent =
-      "+" + todayStars + " ⭐ earned today · " + (S.stars[ki] || 0) + " ⭐ total";
+      "+" + todayStars + " ⭐ earned today · " + (S.stars[ki] || 0) + " ⭐ total · 🕺 " + S.emotes + "/100 emotes";
     document.getElementById("modal-overlay").classList.add("show");
     confetti();
   }
@@ -508,13 +558,22 @@
     saveState(S);
     updateUI();
 
-    // Perfect-day surprise, once per kid per day.
+    // Perfect day = 1 emote, once per kid per day.
     var p = kidProgress(ki);
     if (!wasChecked && p.done === p.total && p.total > 0 && S.celebrated[ki] !== todayStr()) {
       S.celebrated[ki] = todayStr();
       S.perfect[ki] = (S.perfect[ki] || 0) + 1;
+      var emote = EMOTES[Math.floor(Math.random() * EMOTES.length)];
+      S.emotes = (S.emotes || 0) + 1;
+      var century = false;
+      if (S.emotes >= 100) {
+        S.emotes -= 100;
+        S.centuries = (S.centuries || 0) + 1;
+        century = true;
+      }
       saveState(S);
-      showSurprise(ki);
+      updateUI();
+      showSurprise(ki, emote, century);
     }
   }
 
